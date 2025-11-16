@@ -1,0 +1,6 @@
+Relación,ρ,p-valor,Significancia
+Votos vs PIB per cápita,0.04038331547094777,0.5503869741702432,No significativo
+Votos vs Tasa de homicidios,-0.45873299896349656,6.706431483171528e-13,*** (p < 0.001)
+Votos vs Población indígena,0.4417564382756714,5.677266565659563e-12,*** (p < 0.001)
+Servicios básicos vs Desarrollo económico,0.17323961749191577,0.00987067566268733,** (p < 0.01)
+Electricidad vs PIB per cápita,0.29834379963013513,6.383971417457624e-06,*** (p < 0.001)

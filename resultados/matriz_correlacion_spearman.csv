@@ -1,0 +1,8 @@
+,votos_noboa_pct,pib_per_capita,tasa_homicidios,pob_indigena_pct,agua_publica,electricidad,poblacion
+votos_noboa_pct,1.0,0.04,-0.459,0.442,0.436,0.161,-0.182
+pib_per_capita,0.04,1.0,0.248,0.17,0.173,0.298,0.271
+tasa_homicidios,-0.459,0.248,1.0,-0.326,-0.335,-0.055,0.465
+pob_indigena_pct,0.442,0.17,-0.326,1.0,0.214,-0.204,-0.117
+agua_publica,0.436,0.173,-0.335,0.214,1.0,0.607,0.025
+electricidad,0.161,0.298,-0.055,-0.204,0.607,1.0,0.172
+poblacion,-0.182,0.271,0.465,-0.117,0.025,0.172,1.0

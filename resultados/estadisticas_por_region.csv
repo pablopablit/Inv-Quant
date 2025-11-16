@@ -1,0 +1,7 @@
+,votos_noboa_pct,votos_noboa_pct,votos_noboa_pct,votos_noboa_pct,pib_per_capita,pib_per_capita,pib_per_capita,pib_per_capita,tasa_homicidios,tasa_homicidios,tasa_homicidios,tasa_homicidios,pob_indigena_pct,pob_indigena_pct,pob_indigena_pct,pob_indigena_pct,agua_publica,agua_publica,agua_publica,agua_publica
+,mean,std,min,max,mean,std,min,max,mean,std,min,max,mean,std,min,max,mean,std,min,max
+region,,,,,,,,,,,,,,,,,,,,
+Costa,41.96,12.06,15.51,71.14,3611.99,2767.28,965,15466,53.91,40.01,0.0,209.39,0.88,2.19,0.0,18.1,64.88,21.11,19.4,97.7
+Insular,63.48,9.36,54.63,73.27,9936.0,7428.98,3146,17871,0.0,0.0,0.0,0.0,7.9,3.32,4.1,10.2,88.67,6.47,84.3,96.1
+Oriente,62.75,14.47,25.77,83.31,11783.05,23420.23,1316,134426,15.73,27.07,0.0,126.65,45.91,27.6,0.2,97.5,70.06,15.37,20.9,91.7
+Sierra,60.0,12.54,31.49,83.54,3320.05,3670.48,1261,31661,12.81,33.67,0.0,239.6,12.78,20.29,0.0,97.7,86.34,11.94,50.2,99.1
