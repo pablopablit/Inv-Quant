@@ -1,0 +1,7 @@
+Relacion,rho,p_valor,Significancia,Interpretacion
+Votos vs PIB per cápita,0.04038331547094777,0.5503869741702432,ns,Débil positiva
+Votos vs Tasa homicidios,-0.45873299896349656,6.706431483171528e-13,***,Moderada negativa
+Votos vs Pob. indígena,0.4417564382756714,5.677266565659563e-12,***,Moderada positiva
+Agua pública vs PIB,0.17323961749191577,0.00987067566268733,**,Débil positiva
+Agua vs Electricidad,0.6073617883503986,1.1378997324857171e-23,***,Fuerte positiva
+Homicidios vs Población,0.46479006885176716,3.040210156917678e-13,***,Moderada positiva
