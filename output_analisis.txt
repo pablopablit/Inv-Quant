@@ -1,0 +1,359 @@
+
+================================================================================
+ANÁLISIS DE VOTACIÓN INDÍGENA EN ECUADOR - ELECCIONES 2025
+================================================================================
+
+Regresión Logística Binomial con Ponderación por Votos Válidos
+Diagnóstico de Multicolinealidad: VIF < 5
+
+================================================================================
+================================================================================
+FASE 1: CARGA Y PREPARACIÓN DE DATOS
+================================================================================
+
+✓ Dataset cargado: 221 cantones
+✓ Variables: 17 columnas
+
+--------------------------------------------------------------------------------
+Preparación de variables
+--------------------------------------------------------------------------------
+
+✓ Cantones excluidos (región Insular): 3
+✓ Cantones en análisis: 218
+
+⚠ Valores faltantes detectados:
+pob_indigena_pct       20
+agua_publica           16
+electricidad           22
+indigena_x_logpib      20
+indigena_x_costa       20
+indigena_x_amazonia    20
+dtype: int64
+  → pob_indigena_pct: imputado con mediana = 1.45
+  → agua_publica: imputado con mediana = 78.30
+  → electricidad: imputado con mediana = 96.70
+  → indigena_x_logpib: imputado con mediana = 11.62
+  → indigena_x_costa: imputado con mediana = 0.00
+  → indigena_x_amazonia: imputado con mediana = 0.00
+
+✓ Variables preparadas exitosamente
+✓ Observaciones finales: 218
+
+================================================================================
+FASE 2: ANÁLISIS EXPLORATORIO DE DATOS
+================================================================================
+
+Estadísticas Descriptivas:
+--------------------------------------------------------------------------------
+                  count      mean       std     min     25%      50%       75%       max       CV  asimetria  curtosis
+prop_gonzalez     218.0     0.466     0.157   0.165   0.339    0.468     0.587     0.849   33.757      0.081    -0.947
+pob_indigena_pct  218.0    12.850    22.627   0.000   0.325    1.450    12.475    97.700  176.078      2.051     3.447
+log_pib_pc        218.0     8.038     0.758   6.872   7.531    7.859     8.257    11.809    9.428      1.814     4.409
+agua_publica      218.0    74.938    18.926  19.400  67.425   78.300    89.300    99.100   25.256     -1.014     0.394
+electricidad      218.0    95.361     5.693  43.200  94.800   96.700    98.100    99.700    5.970     -5.466    40.856
+tasa_homicidios   218.0    29.570    40.260   0.000   2.240   10.705    46.358   239.600  136.151      2.093     5.311
+altitud           218.0  1208.463  1200.820   0.000  92.000  780.500  2345.500  5280.000   99.367      0.674    -0.644
+
+
+Distribución de cantones por región:
+--------------------------------------------------------------------------------
+  Amazonía: 41 cantones (18.8%)
+  Sierra: 91 cantones (41.7%)
+  Costa: 86 cantones (39.4%)
+
+
+Voto promedio por González según región:
+--------------------------------------------------------------------------------
+  Costa: 58.04% (SD=12.07%)
+  Sierra: 40.00% (SD=12.54%)
+  Amazonía: 37.26% (SD=14.47%)
+
+
+Correlación bivariada (Pearson):
+--------------------------------------------------------------------------------
+  Voto González vs % Población Indígena:
+    r = -0.2907, p = 0.0000 ***
+  Voto González vs Log PIB per cápita:
+    r = 0.0487, p = 0.4742 ns
+  % Población Indígena vs Log PIB per cápita:
+    r = 0.0416, p = 0.5408 ns
+
+================================================================================
+FASE 3: DIAGNÓSTICO DE MULTICOLINEALIDAD (VIF)
+================================================================================
+
+Criterio conservador: VIF < 5
+  VIF < 5:   ✓ Sin multicolinealidad problemática
+  VIF 5-10:  ⚠ Multicolinealidad moderada
+  VIF > 10:  ✗ Multicolinealidad severa
+
+
+Resultados VIF:
+--------------------------------------------------------------------------------
+  indigena_x_logpib              VIF =  77.669  ✗ SEVERO
+  pob_indigena_pct               VIF =  75.339  ✗ SEVERO
+  indigena_x_amazonia            VIF =   6.208  ⚠ MODERADO
+  costa                          VIF =   3.471  ✓ OK
+  amazonia                       VIF =   3.296  ✓ OK
+  altitud                        VIF =   3.282  ✓ OK
+  electricidad                   VIF =   2.511  ✓ OK
+  log_pib_pc                     VIF =   2.381  ✓ OK
+  agua_publica                   VIF =   1.858  ✓ OK
+  tasa_homicidios                VIF =   1.806  ✓ OK
+  log_poblacion                  VIF =   1.594  ✓ OK
+  indigena_x_costa               VIF =   1.124  ✓ OK
+
+--------------------------------------------------------------------------------
+✗ ALERTA: Multicolinealidad severa detectada (VIF > 10):
+    - indigena_x_logpib: VIF = 77.669
+    - pob_indigena_pct: VIF = 75.339
+    - indigena_x_amazonia: VIF = 6.208
+  RECOMENDACIÓN: Eliminar términos de interacción o centrar variables.
+
+================================================================================
+FASE 4: REGRESIÓN LOGÍSTICA BINOMIAL
+================================================================================
+
+Especificación del modelo:
+--------------------------------------------------------------------------------
+Familia: Binomial (apropiada para proporciones [0,1])
+Link: Logit
+Ponderación: Votos válidos cantonales
+Estimación: Máxima verosimilitud (MLE)
+
+
+================================================================================
+MODELO 1: EFECTOS PRINCIPALES (Sin interacciones)
+================================================================================
+
+                 Generalized Linear Model Regression Results                  
+==============================================================================
+Dep. Variable:          prop_gonzalez   No. Observations:                  218
+Model:                            GLM   Df Residuals:                 10342862
+Model Family:                Binomial   Df Model:                            9
+Link Function:                  Logit   Scale:                          1.0000
+Method:                          IRLS   Log-Likelihood:            -4.6076e+06
+Date:                Tue, 23 Dec 2025   Deviance:                   3.4468e+05
+Time:                        00:14:32   Pearson chi2:                 3.37e+05
+No. Iterations:                     4   Pseudo R-squ. (CS):              1.000
+Covariance Type:            nonrobust                                         
+====================================================================================
+                       coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------------
+Intercept           -0.5980      0.025    -23.737      0.000      -0.647      -0.549
+pob_indigena_pct     0.0035   5.74e-05     60.433      0.000       0.003       0.004
+log_pib_pc           0.0334      0.002     19.625      0.000       0.030       0.037
+costa                0.3331      0.004     78.817      0.000       0.325       0.341
+amazonia            -0.3403      0.005    -72.009      0.000      -0.350      -0.331
+agua_publica        -0.0109   5.56e-05   -195.673      0.000      -0.011      -0.011
+electricidad         0.0150      0.000     53.799      0.000       0.014       0.016
+tasa_homicidios      0.0028   2.66e-05    104.320      0.000       0.003       0.003
+altitud          -2.957e-05   1.71e-06    -17.279      0.000   -3.29e-05   -2.62e-05
+log_poblacion       -0.0570      0.001    -90.364      0.000      -0.058      -0.056
+====================================================================================
+
+
+================================================================================
+MODELO 2: CON INTERACCIONES (H2: Polarización económica, H3: Mediación territorial)
+================================================================================
+
+                 Generalized Linear Model Regression Results                  
+==============================================================================
+Dep. Variable:          prop_gonzalez   No. Observations:                  218
+Model:                            GLM   Df Residuals:                 10342859
+Model Family:                Binomial   Df Model:                           12
+Link Function:                  Logit   Scale:                          1.0000
+Method:                          IRLS   Log-Likelihood:            -4.6006e+06
+Date:                Tue, 23 Dec 2025   Deviance:                   3.3055e+05
+Time:                        00:14:32   Pearson chi2:                 3.22e+05
+No. Iterations:                     4   Pseudo R-squ. (CS):              1.000
+Covariance Type:            nonrobust                                         
+=======================================================================================
+                          coef    std err          z      P>|z|      [0.025      0.975]
+---------------------------------------------------------------------------------------
+Intercept               0.8354      0.030     27.882      0.000       0.777       0.894
+pob_indigena_pct       -0.0338      0.000    -79.003      0.000      -0.035      -0.033
+log_pib_pc             -0.0142      0.002     -7.483      0.000      -0.018      -0.010
+costa                   0.3586      0.004     84.374      0.000       0.350       0.367
+amazonia               -0.2218      0.005    -43.271      0.000      -0.232      -0.212
+indigena_x_logpib       0.0049   5.37e-05     92.083      0.000       0.005       0.005
+indigena_x_costa       -0.0308      0.001    -54.022      0.000      -0.032      -0.030
+indigena_x_amazonia    -0.0110      0.000    -80.435      0.000      -0.011      -0.011
+agua_publica           -0.0106   5.64e-05   -188.805      0.000      -0.011      -0.011
+electricidad            0.0019      0.000      5.700      0.000       0.001       0.002
+tasa_homicidios         0.0030   2.73e-05    108.840      0.000       0.003       0.003
+altitud             -3.378e-05   1.73e-06    -19.505      0.000   -3.72e-05   -3.04e-05
+log_poblacion          -0.0398      0.001    -60.634      0.000      -0.041      -0.038
+=======================================================================================
+
+
+================================================================================
+COMPARACIÓN DE MODELOS
+================================================================================
+
+Test de Razón de Verosimilitud (Likelihood Ratio Test):
+  H0: Modelo 1 (sin interacciones) es suficiente
+  Ha: Modelo 2 (con interacciones) explica significativamente mejor
+
+  LR statistic = 14130.5187
+  df = 3
+  p-value = 0.000000
+
+  ✓ RESULTADO: Rechazamos H0 (p < 0.05)
+    Las interacciones mejoran significativamente el modelo.
+    MODELO PREFERIDO: Modelo 2 (con interacciones)
+
+
+Criterios de Información:
+                                      Modelo 1        Modelo 2      Diferencia
+--------------------------------------------------------------------------------
+AIC (menor es mejor)                9215275.38      9201150.86       -14124.52
+BIC (menor es mejor)             -166711240.28   -166725322.34       -14082.06
+Log-Likelihood                     -4607627.69     -4600562.43         7065.26
+
+
+Pseudo R² (McFadden):
+  Modelo 1: 1.0000
+  Modelo 2: 1.0000
+  Incremento: 0.0000
+
+================================================================================
+FASE 5: INTERPRETACIÓN DE RESULTADOS
+================================================================================
+
+
+Odds Ratios (OR) e Intervalos de Confianza 95%:
+--------------------------------------------------------------------------------
+Interpretación: OR > 1 aumenta la probabilidad de votar por González
+                OR < 1 disminuye la probabilidad de votar por González
+                OR = 1 no tiene efecto
+
+                       Coef      OR  IC_95%_inferior  IC_95%_superior  p_value  Sig
+Intercept            0.8354  2.3056           2.1741           2.4451      0.0  ***
+pob_indigena_pct    -0.0338  0.9667           0.9659           0.9676      0.0  ***
+log_pib_pc          -0.0142  0.9859           0.9823           0.9896      0.0  ***
+costa                0.3586  1.4314           1.4195           1.4433      0.0  ***
+amazonia            -0.2218  0.8011           0.7931           0.8092      0.0  ***
+indigena_x_logpib    0.0049  1.0050           1.0049           1.0051      0.0  ***
+indigena_x_costa    -0.0308  0.9697           0.9686           0.9708      0.0  ***
+indigena_x_amazonia -0.0110  0.9891           0.9888           0.9893      0.0  ***
+agua_publica        -0.0106  0.9894           0.9893           0.9895      0.0  ***
+electricidad         0.0019  1.0019           1.0012           1.0025      0.0  ***
+tasa_homicidios      0.0030  1.0030           1.0029           1.0030      0.0  ***
+altitud             -0.0000  1.0000           1.0000           1.0000      0.0  ***
+log_poblacion       -0.0398  0.9610           0.9598           0.9622      0.0  ***
+
+
+Efectos Marginales Promedio (AME):
+--------------------------------------------------------------------------------
+Cambio en probabilidad de votar por González ante cambio unitario en X
+
+         GLM Marginal Effects        
+=====================================
+Dep. Variable:          prop_gonzalez
+Method:                          dydx
+At:                           overall
+=======================================================================================
+                         dy/dx    std err          z      P>|z|      [0.025      0.975]
+---------------------------------------------------------------------------------------
+pob_indigena_pct       -0.0080      0.000    -79.675      0.000      -0.008      -0.008
+log_pib_pc             -0.0034      0.000     -7.482      0.000      -0.004      -0.002
+costa                   0.0851      0.001     84.282      0.000       0.083       0.087
+amazonia               -0.0526      0.001    -43.360      0.000      -0.055      -0.050
+indigena_x_logpib       0.0012   1.26e-05     93.056      0.000       0.001       0.001
+indigena_x_costa       -0.0073      0.000    -54.099      0.000      -0.008      -0.007
+indigena_x_amazonia    -0.0026   3.22e-05    -81.212      0.000      -0.003      -0.003
+agua_publica           -0.0025   1.32e-05   -192.071      0.000      -0.003      -0.003
+electricidad            0.0004   7.72e-05      5.698      0.000       0.000       0.001
+tasa_homicidios         0.0007   6.45e-06    109.136      0.000       0.001       0.001
+altitud             -8.014e-06   4.11e-07    -19.511      0.000   -8.82e-06   -7.21e-06
+log_poblacion          -0.0094      0.000    -60.358      0.000      -0.010      -0.009
+=======================================================================================
+
+
+================================================================================
+INTERPRETACIÓN NARRATIVA DE HIPÓTESIS
+================================================================================
+
+pob_indigena_pct:
+  Coeficiente: -0.0338 ***
+  Odds Ratio: 0.9667
+  p-value: 0.000000
+  → Un aumento de 1% en población indígena reduce los odds de votar
+    por González en 3.33%
+  → RECHAZA H1: No hay patrón pro-correísta
+
+log_pib_pc:
+  Coeficiente: -0.0142 ***
+  Odds Ratio: 0.9859
+  p-value: 0.000000
+  → Mayor PIB per cápita reduce voto por González
+  → Confirma polarización económica: sectores más ricos rechazan correísmo
+
+costa:
+  Coeficiente: 0.3586 ***
+  Odds Ratio: 1.4314
+  p-value: 0.000000
+  → Efecto regional significativo: Costa difiere de Sierra (ref)
+
+amazonia:
+  Coeficiente: -0.2218 ***
+  Odds Ratio: 0.8011
+  p-value: 0.000000
+  → Efecto regional significativo: Amazonía difiere de Sierra (ref)
+
+indigena_x_logpib:
+  Coeficiente: 0.0049 ***
+  Odds Ratio: 1.0050
+  p-value: 0.000000
+  → CONFIRMA H2: Polarización económica modera efecto indígena
+  → La relación entre población indígena y voto depende del nivel de PIB
+
+indigena_x_costa:
+  Coeficiente: -0.0308 ***
+  Odds Ratio: 0.9697
+  p-value: 0.000000
+  → CONFIRMA H3: Mediación territorial en Costa
+  → El efecto de población indígena es diferente en Costa vs Sierra
+
+indigena_x_amazonia:
+  Coeficiente: -0.0110 ***
+  Odds Ratio: 0.9891
+  p-value: 0.000000
+  → CONFIRMA H3: Mediación territorial en Amazonía
+  → El efecto de población indígena es diferente en Amazonía vs Sierra
+
+================================================================================
+FASE 6: VISUALIZACIONES
+================================================================================
+✓ Guardado: resultados_votacion_indigena/01_variable_dependiente.png
+✓ Guardado: resultados_votacion_indigena/02_h1_h3_indigena_voto.png
+✓ Guardado: resultados_votacion_indigena/03_coeficientes_modelo2.png
+✓ Guardado: resultados_votacion_indigena/04_h2_polarizacion_economica.png
+✓ Guardado: resultados_votacion_indigena/05_h3_mediacion_territorial.png
+✓ Guardado: resultados_votacion_indigena/06_diagnostico_residuos.png
+
+✓ Todas las visualizaciones guardadas en: resultados_votacion_indigena/
+
+================================================================================
+FASE 7: EXPORTACIÓN DE RESULTADOS
+================================================================================
+✓ resultados_votacion_indigena/01_estadisticas_descriptivas.csv
+✓ resultados_votacion_indigena/02_vif_multicolinealidad.csv
+✓ resultados_votacion_indigena/03_modelo1_efectos_principales.csv
+✓ resultados_votacion_indigena/04_modelo2_con_interacciones.csv
+✓ resultados_votacion_indigena/05_odds_ratios.csv
+✓ resultados_votacion_indigena/06_efectos_marginales.csv
+✓ resultados_votacion_indigena/07_comparacion_modelos.csv
+
+✓ Todos los resultados exportados a: resultados_votacion_indigena/
+
+================================================================================
+ANÁLISIS COMPLETADO EXITOSAMENTE
+================================================================================
+
+Consulte los archivos generados en:
+  - resultados_votacion_indigena/ (tablas CSV)
+  - resultados_votacion_indigena/ (gráficos PNG)
+
+================================================================================
