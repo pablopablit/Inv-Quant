@@ -87,8 +87,8 @@ def cargar_datos(archivo='Basecantones2csv.csv'):
     print("FASE 1: CARGA Y PREPARACIÓN DE DATOS")
     print("="*80)
 
-    # Leer CSV con formato europeo (separador ; y decimal ,)
-    df = pd.read_csv(archivo, sep=';', decimal=',', encoding='utf-8-sig')
+    # Leer CSV con formato (separador ; y decimal .)
+    df = pd.read_csv(archivo, sep=';', decimal='.', encoding='utf-8-sig')
 
     print(f"\n✓ Dataset cargado: {len(df)} cantones")
     print(f"✓ Variables: {len(df.columns)} columnas")
@@ -112,6 +112,15 @@ def preparar_variables(df):
                      'pob_indigena_pct', 'agua_publica', 'electricidad',
                      'pib_per_capita', 'tasa_homicidios', 'altitud',
                      'costa', 'sierra', 'oriente', 'insular']
+
+    # Convertir columnas numéricas a tipo numérico
+    columnas_numericas = ['votos_noboa_abs', 'votos_gonzalez_abs', 'votos_noboa_pct',
+                         'votos_gonzalez_pct', 'poblacion', 'pob_indigena_pct',
+                         'agua_publica', 'electricidad', 'pib_per_capita',
+                         'tasa_homicidios', 'altitud', 'costa', 'sierra', 'oriente', 'insular']
+
+    for col in columnas_numericas:
+        datos[col] = pd.to_numeric(datos[col], errors='coerce')
 
     # ========================================================================
     # VARIABLE DEPENDIENTE: Proporción de votos para González
@@ -141,10 +150,10 @@ def preparar_variables(df):
     datos['log_pib_pc'] = np.log(datos['pib_per_capita'])
 
     # Verificar valores infinitos
-    if datos['log_pib_pc'].isinf().any():
+    if np.isinf(datos['log_pib_pc']).any():
         print("⚠ Advertencia: Valores infinitos en log_pib_pc, reemplazando con mediana")
-        mediana_log_pib = datos['log_pib_pc'][~datos['log_pib_pc'].isinf()].median()
-        datos.loc[datos['log_pib_pc'].isinf(), 'log_pib_pc'] = mediana_log_pib
+        mediana_log_pib = datos['log_pib_pc'][~np.isinf(datos['log_pib_pc'])].median()
+        datos.loc[np.isinf(datos['log_pib_pc']), 'log_pib_pc'] = mediana_log_pib
 
     # 3. Variables dummy regionales (Sierra es la categoría de referencia)
     # Costa ya está en el dataset
@@ -152,9 +161,10 @@ def preparar_variables(df):
     datos['amazonia'] = datos['oriente']
 
     # Eliminar región Insular del análisis (solo 3 cantones, grupo muy pequeño)
+    cantones_insular = datos['insular'].sum()
     datos = datos[datos['insular'] == 0].copy()
 
-    print(f"\n✓ Cantones excluidos (región Insular): {df['insular'].sum()}")
+    print(f"\n✓ Cantones excluidos (región Insular): {cantones_insular}")
     print(f"✓ Cantones en análisis: {len(datos)}")
 
     # ========================================================================
@@ -737,13 +747,15 @@ def crear_visualizaciones(datos, modelo1, modelo2, directorio='resultados_votaci
     fig, ax = plt.subplots(figsize=(10, 8))
 
     y_pos = np.arange(len(order))
-    colors = ['red' if p < 0.05 else 'gray' for p in pvalues[order]]
 
-    ax.errorbar(params[order], y_pos,
-                xerr=[params[order] - conf_int.loc[order, 0],
-                      conf_int.loc[order, 1] - params[order]],
-                fmt='o', markersize=8, capsize=5, capthick=2,
-                color='black', ecolor=colors)
+    # Dibujar cada punto con su color correspondiente
+    for i, var in enumerate(order):
+        color = 'red' if pvalues[var] < 0.05 else 'gray'
+        ax.errorbar(params[var], i,
+                   xerr=[[params[var] - conf_int.loc[var, 0]],
+                         [conf_int.loc[var, 1] - params[var]]],
+                   fmt='o', markersize=8, capsize=5, capthick=2,
+                   color=color, ecolor=color)
 
     # Línea en cero
     ax.axvline(0, color='black', linestyle='-', linewidth=0.8)
@@ -961,16 +973,8 @@ def exportar_resultados(datos, vif_data, modelo1, modelo2, or_table, margeff,
     print(f"✓ {directorio}/05_odds_ratios.csv")
 
     # 6. Efectos marginales
-    margeff_summary = pd.DataFrame({
-        'Variable': margeff.summary_frame().index,
-        'dy/dx': margeff.summary_frame()['dy/dx'].values,
-        'Std_Error': margeff.summary_frame()['Std. Err.'].values,
-        'z_value': margeff.summary_frame()['z'].values,
-        'p_value': margeff.summary_frame()['Pr(>|z|)'].values,
-        'IC_95%_inf': margeff.summary_frame()['Cont. 2.5%'].values,
-        'IC_95%_sup': margeff.summary_frame()['Cont. 97.5%'].values
-    })
-    margeff_summary.to_csv(f'{directorio}/06_efectos_marginales.csv', index=False)
+    margeff_df = margeff.summary_frame()
+    margeff_df.to_csv(f'{directorio}/06_efectos_marginales.csv')
     print(f"✓ {directorio}/06_efectos_marginales.csv")
 
     # 7. Comparación de modelos
